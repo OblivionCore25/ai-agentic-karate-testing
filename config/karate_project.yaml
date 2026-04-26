@@ -1,0 +1,14 @@
+project:
+  name: "sample-orders-api"
+  karate_project_path: "./karate_project"
+  
+targets:
+  - name: "orders-api"
+    spec_path: "./data/sample_specs/orders-api.yaml"
+    source_paths:
+      - "./data/sample_source/"
+    existing_tests_path: "./data/sample_features/"
+    base_url: "http://localhost:8080"
+    environments:
+      dev: "http://localhost:8080"
+      staging: "http://staging.example.com"

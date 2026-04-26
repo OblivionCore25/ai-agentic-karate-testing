@@ -1,0 +1,42 @@
+[project]
+name = "karate-ai-agent"
+version = "0.1.0"
+description = "AI Agentic System for Automation Testing with Karate Framework"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "langchain>=0.2.0",
+    "langgraph>=0.1.0",
+    "langchain-anthropic>=0.1.0",
+    "chromadb>=0.5.0",
+    "sentence-transformers>=2.7.0",
+    "tree-sitter>=0.22.0",
+    "tree-sitter-java>=0.21.0",
+    "tree-sitter-python>=0.21.0",
+    "openapi-spec-validator>=0.7.0",
+    "prance>=23.6.0",
+    "typer>=0.12.0",
+    "rich>=13.0.0",
+    "pydantic>=2.0.0",
+    "pydantic-settings>=2.0.0",
+    "python-dotenv>=1.0.0",
+    "pyyaml>=6.0.0"
+]
+
+[project.optional-dependencies]
+openai = [
+    "openai>=1.0.0",
+    "tiktoken>=0.7.0"
+]
+dev = [
+    "pytest>=8.0.0",
+    "pytest-cov>=4.1.0",
+    "pytest-asyncio>=0.23.0"
+]
+
+[project.scripts]
+karate-ai = "cli.app:app"
+
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
