@@ -9,6 +9,9 @@ class Settings(BaseSettings):
     claude_model_analysis: str = "claude-3-haiku-20240307"
     llm_temperature_generation: float = 0.5
     llm_temperature_analysis: float = 0.2
+    llm_max_tokens_generation: int = 8192
+    llm_max_tokens_analysis: int = 4096
+    max_retry_count: int = 2
     
     # Embedding Settings
     embedding_provider: Literal["local", "openai"] = "local"
@@ -26,6 +29,7 @@ class Settings(BaseSettings):
     # Project Settings
     karate_project_path: str = "./karate_project"
     karate_config_path: str = "./config/karate_project.yaml"
+    generated_features_dir: str = "./karate_project/src/test/java/karate/generated"
     log_level: str = "INFO"
 
     model_config = SettingsConfigDict(

@@ -1,0 +1,6 @@
+authorizationHeader,expectedStatus,description
+Bearer invalid-or-expired-token,401,Plaintext invalid token
+Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.expired.signature,401,Expired JWT token
+Bearer ,401,Empty token value after Bearer prefix
+Bearer eyInvalidBase64!!!,401,Malformed JWT with invalid base64 characters
+Bearer null,401,Literal null string as token

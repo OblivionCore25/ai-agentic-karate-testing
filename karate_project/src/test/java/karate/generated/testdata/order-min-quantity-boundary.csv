@@ -1,0 +1,2 @@
+customerId,customerTier,productId,quantity,price,expectedStatus,expectedTotalAmount,expectedDiscountApplied
+cust-123,STANDARD,prod-1,1,99.99,201,99.99,0.0

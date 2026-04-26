@@ -1,0 +1,6 @@
+customerId,customerTier,expectedStatus
+cust-123,STANDARD,400
+cust-456,GOLD,400
+cust-789,SILVER,400
+,STANDARD,400
+cust-000,PLATINUM,400

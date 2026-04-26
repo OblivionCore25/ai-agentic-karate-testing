@@ -1,0 +1,6 @@
+customerId,customerTier,productId,quantity,price,expectedStatus,expectedDiscountApplied,expectedTotalAmount,notes
+cust-003,GOLD,prod-3,1,50.0,201,0.0,50.0,Below threshold - single low-price item no discount
+cust-003,GOLD,prod-3,2,50.0,201,0.0,100.0,Below threshold - two low-price items no discount
+cust-003,GOLD,prod-3,1,200.0,201,0.0,200.0,Below threshold - single mid-price item no discount
+cust-003,GOLD,prod-3,3,200.0,201,60.0,600.0,Above threshold - matches cust-002 pattern discount applied
+cust-002,GOLD,prod-2,3,200.0,201,60.0,600.0,Reference case - confirmed discount eligible GOLD order

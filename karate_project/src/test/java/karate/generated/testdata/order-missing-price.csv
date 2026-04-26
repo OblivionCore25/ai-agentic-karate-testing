@@ -1,0 +1,5 @@
+customerId,customerTier,itemPayload,expectedStatus
+cust-123,STANDARD,{"productId": "prod-1" COMMA "quantity": 2},400
+cust-456,GOLD,{"productId": "prod-2" COMMA "quantity": 1},400
+cust-789,SILVER,{"quantity": 3 COMMA "price": 50.0},400
+cust-123,STANDARD,{"productId": "prod-3"},400

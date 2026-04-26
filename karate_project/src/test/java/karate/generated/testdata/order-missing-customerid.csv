@@ -1,0 +1,2 @@
+customerId,customerTier,productId,quantity,price,expectedStatus
+null,STANDARD,prod-1,1,100.0,400

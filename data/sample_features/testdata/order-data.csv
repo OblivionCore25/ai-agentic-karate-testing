@@ -1,0 +1,9 @@
+customerId,customerTier,productId,quantity,price,expectedStatus,expectedDiscount
+cust-001,STANDARD,prod-1,2,100.0,201,0.0
+cust-002,GOLD,prod-2,3,200.0,201,60.0
+cust-003,GOLD,prod-3,1,50.0,201,0.0
+cust-004,SILVER,prod-1,5,150.0,201,0.0
+,STANDARD,prod-1,1,100.0,400,0.0
+cust-005,STANDARD,,1,100.0,400,0.0
+cust-006,STANDARD,prod-1,0,100.0,400,0.0
+cust-007,STANDARD,prod-1,1,-50.0,400,0.0

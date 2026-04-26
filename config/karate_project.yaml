@@ -1,9 +1,11 @@
 project:
   name: "sample-orders-api"
   karate_project_path: "./karate_project"
-  
+
 targets:
   - name: "orders-api"
+    project: "orders-api"
+    domain: "orders"
     spec_path: "./data/sample_specs/orders-api.yaml"
     source_paths:
       - "./data/sample_source/"
@@ -12,3 +14,14 @@ targets:
     environments:
       dev: "http://localhost:8080"
       staging: "http://staging.example.com"
+
+# Additional feature sources from other projects (cross-project learning)
+# Uncomment and add paths to feature files from other teams/projects.
+# These get ingested as "test" origin with their own project tag,
+# so the retriever can prioritize same-project patterns while still
+# learning from cross-project conventions.
+#
+# additional_feature_sources:
+#   - path: "./data/other_project_features/"
+#     project: "auth-service"
+#     domain: "authentication"

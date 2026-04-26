@@ -10,11 +10,11 @@ test:
 	pytest tests/ -v
 
 ingest:
-	python -m cli.app ingest --spec data/sample_specs/orders-api.yaml --source data/sample_source/ --tests data/sample_features/ --karate-examples data/karate_syntax_examples/
+	python3 -m cli.app ingest --spec data/sample_specs/orders-api.yaml --source data/sample_source/ --tests data/sample_features/ --karate-examples data/karate_syntax_examples/
 
 search:
 	@if [ -z "$(QUERY)" ]; then echo "Usage: make search QUERY=\"your query\""; exit 1; fi
-	python -m cli.app retrieve "$(QUERY)"
+	python3 -m cli.app retrieve "$(QUERY)"
 
 clean:
 	rm -rf .pytest_cache

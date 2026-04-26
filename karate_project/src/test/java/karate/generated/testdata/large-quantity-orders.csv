@@ -1,0 +1,3 @@
+customerId,customerTier,productId,quantity,price,expectedStatus
+cust-123,STANDARD,prod-1,2147483647,1.0,201
+cust-123,STANDARD,prod-1,2147483647,1.0,400

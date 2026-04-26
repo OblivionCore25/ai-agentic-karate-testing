@@ -1,0 +1,6 @@
+customerId,customerTier,productId,quantity,price,expectedStatus,expectedDiscountApplied,expectedTotalAmount
+cust-002,GOLD,prod-2,3,200.0,201,60.0,540.0
+cust-002,GOLD,prod-2,5,200.0,201,100.0,900.0
+cust-002,GOLD,prod-2,10,200.0,201,200.0,1800.0
+cust-002,GOLD,prod-3,2,150.0,201,30.0,270.0
+cust-002,GOLD,prod-1,4,250.0,201,100.0,900.0
