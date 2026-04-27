@@ -75,7 +75,8 @@ class VectorStore:
         metadatas = []
         
         for i, chunk in enumerate(chunks):
-            chunk_id = f"{origin_type}_{chunk.endpoint_tag}_{chunk.chunk_type}_{i}"
+            basename = os.path.basename(chunk.source_file)
+            chunk_id = f"{origin_type}_{basename}_{chunk.endpoint_tag}_{chunk.chunk_type}_{i}"
             # Replace spaces and slashes for a cleaner ID
             chunk_id = chunk_id.replace(" ", "_").replace("/", "_").replace(".", "_")
             
