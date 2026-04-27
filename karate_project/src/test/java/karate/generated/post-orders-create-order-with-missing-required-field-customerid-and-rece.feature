@@ -15,7 +15,7 @@ Feature: Order Validation - Missing Required Field customerId
   @validation
   Scenario Outline: Create order with missing required field customerId and receive 400 error
     # Load test data from CSV for data-driven validation coverage
-    * def testData = read('classpath:testdata/order-missing-customerid.csv')
+    * def testData = read('testdata/order-missing-customerid.csv')
 
     Given path '/orders'
     And request
@@ -45,4 +45,4 @@ Feature: Order Validation - Missing Required Field customerId
     And match response.message == '#notnull'
 
     Examples:
-      | read('classpath:testdata/order-missing-customerid.csv') |
+      | read('testdata/order-missing-customerid.csv') |

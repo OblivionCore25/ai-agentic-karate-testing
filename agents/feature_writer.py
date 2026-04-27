@@ -58,11 +58,15 @@ def _extract_companion_files(raw_content: str) -> tuple:
     for match in pattern.finditer(raw_content):
         filename = match.group(1).strip()
         csv_content = match.group(2).strip()
-        companions.append({
-            "filename": filename,
-            "content": csv_content,
-            "file_type": "csv"
-        })
+        
+        if csv_content.count('\n') >= 1:
+            companions.append({
+                "filename": filename,
+                "content": csv_content,
+                "file_type": "csv"
+            })
+        else:
+            logger.warning(f"Generated CSV {filename} appears to be empty or missing data rows. Skipping.")
     
     # Remove companion sections from the feature content
     cleaned = pattern.sub('', raw_content).strip()
@@ -88,6 +92,35 @@ def write_features(state: AgentState) -> Dict[str, Any]:
             "feature_files": [],
             "reasoning_chain": reasoning_chain + ["No scenarios to write features for"],
         }
+        
+    analysis = state.get("analysis", {})
+    has_test_issues = analysis.get("has_test_issues", False)
+    
+    # Correction mode: if we are retrying after analysis
+    if has_test_issues:
+        existing_features = list(state.get("feature_files", []))
+        analyses = analysis.get("analyses", [])
+        
+        corrected_count = 0
+        for analysis_result in analyses:
+            if analysis_result.get("classification") == "test_issue" and analysis_result.get("suggested_fix"):
+                # Find matching feature and update its content
+                for feat in existing_features:
+                    if feat["scenario_name"] == analysis_result["scenario_name"]:
+                        feat["content"] = analysis_result["suggested_fix"]
+                        feat["reasoning"] = f"[AUTO-CORRECTED] {analysis_result['explanation']}"
+                        reasoning_chain.append(f"Applied fix for '{feat['scenario_name']}': {analysis_result['explanation']}")
+                        corrected_count += 1
+                        break
+                        
+        if corrected_count > 0:
+            logger.info(f"Applied {corrected_count} automated fixes to features.")
+            return {
+                "feature_files": existing_features,
+                "reasoning_chain": reasoning_chain,
+            }
+            
+        reasoning_chain.append("Retry triggered, but no valid fixes found. Regenerating normally.")
 
     # Get reference and test patterns for the prompt
     reference_text = ""

@@ -39,4 +39,4 @@ Feature: Order Creation Validation - Empty Items Array
     And match response.message == '#notnull'
 
     Examples:
-      | read('classpath:testdata/empty-items-validation.csv') |
+      | read('testdata/empty-items-validation.csv') |

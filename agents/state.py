@@ -68,6 +68,27 @@ class GeneratedFeature(BaseModel):
     )
 
 
+class FailureAnalysis(BaseModel):
+    """Analysis of a test failure from the LLM."""
+    scenario_name: str = Field(description="Name of the failed scenario")
+    classification: Literal["test_issue", "application_bug", "data_issue", "environment_issue"] = Field(
+        description="Classification of the failure root cause"
+    )
+    explanation: str = Field(description="Detailed explanation of why the test failed")
+    confidence: Literal["high", "medium", "low"] = Field(description="Confidence in this classification")
+    suggested_fix: Optional[str] = Field(
+        default=None, 
+        description="Corrected .feature file content (only for test_issue)"
+    )
+    evidence: List[str] = Field(
+        default_factory=list,
+        description="References to source code or spec that support this classification"
+    )
+
+class FailureReport(BaseModel):
+    """A list of failure analyses for structured output."""
+    analyses: List[FailureAnalysis]
+
 # ──────────────────────────────────────────────
 # LangGraph Agent State
 # ──────────────────────────────────────────────
@@ -87,11 +108,14 @@ class AgentState(TypedDict, total=False):
     # Stage 3: Feature writing
     feature_files: Optional[List[dict]]  # Serialized GeneratedFeature dicts
 
-    # Stage 4: Execution (stub for Week 3)
-    execution_results: Optional[List[dict]]
+    # Stage 4: Execution (Week 3)
+    execution_results: Optional[List[dict]]  # Serialized ScenarioResult
 
-    # Stage 5: Analysis (stub for Week 3)
-    analysis: Optional[dict]
+    # Stage 5: Analysis (Week 3)
+    analysis: Optional[dict]  # Serialized FailureReport, or custom dict with has_test_issues
+
+    # Stage 6: Correction Context (Week 3)
+    correction_context: Optional[str]
 
     # Control flow
     retry_count: int

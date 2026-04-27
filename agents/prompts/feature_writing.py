@@ -51,7 +51,7 @@ def _get_data_pattern_directive(pattern: str) -> str:
 ## Data Pattern Directive
 This project uses CSV files for test data. For data-driven scenarios:
 - Use `Scenario Outline:` with placeholders like `<fieldName>`
-- Reference CSV data with: `* def testData = read('classpath:testdata/<filename>.csv')`
+- Reference CSV data with: `* def testData = read('testdata/<filename>.csv')`
 - Also provide the CSV file content separately in your response, marked with:
   COMPANION_CSV_START:<filename>
   <csv content>
@@ -62,7 +62,7 @@ This project uses CSV files for test data. For data-driven scenarios:
 ## Data Pattern Directive
 This project uses Excel files for test data. For data-driven scenarios:
 - Use `Scenario Outline:` with placeholders
-- Reference data with: `* def testData = read('classpath:testdata/<filename>.xlsx')`
+- Reference data with: `* def testData = read('testdata/<filename>.xlsx')`
 - Since we cannot generate binary Excel files, provide the data as CSV format and
   note it should be converted to Excel. Mark with:
   COMPANION_CSV_START:<filename>

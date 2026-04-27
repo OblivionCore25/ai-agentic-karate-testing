@@ -38,4 +38,4 @@ Feature: Order Creation - Item Quantity Boundary Validation
     And match response.message contains '#string'
 
     Examples:
-      | read('classpath:testdata/order-quantity-boundary.csv') |
+      | read('testdata/order-quantity-boundary.csv') |

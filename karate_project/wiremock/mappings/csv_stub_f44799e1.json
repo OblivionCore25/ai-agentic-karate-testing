@@ -1,0 +1,45 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "/api/v1/orders",
+    "headers": {
+      "Authorization": {
+        "equalTo": "Bearer test-token"
+      },
+      "Content-Type": {
+        "contains": "application/json"
+      }
+    },
+    "bodyPatterns": [
+      {
+        "matchesJsonPath": "$.[?(@.customerId == 'cust-007')]"
+      },
+      {
+        "matchesJsonPath": "$.[?(@.customerTier == 'SILVER')]"
+      },
+      {
+        "matchesJsonPath": "$.items[0].[?(@.productId == 'prod-1')]"
+      },
+      {
+        "matchesJsonPath": "$.items[0].[?(@.quantity == 3)]"
+      },
+      {
+        "matchesJsonPath": "$.items[0].[?(@.price == 99.99)]"
+      }
+    ]
+  },
+  "response": {
+    "status": 201,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "id": "ord-40",
+      "customerId": "cust-007",
+      "customerTier": "SILVER",
+      "status": "PENDING",
+      "discountApplied": 0.0,
+      "totalAmount": 299.97
+    }
+  }
+}

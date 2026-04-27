@@ -1,0 +1,36 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "/api/v1/orders",
+    "headers": {
+      "Authorization": {
+        "equalTo": "Bearer test-token"
+      },
+      "Content-Type": {
+        "contains": "application/json"
+      }
+    },
+    "bodyPatterns": [
+      {
+        "matchesJsonPath": "$.[?(@.customerId == 'cust-gold-multi-3')]"
+      },
+      {
+        "matchesJsonPath": "$.[?(@.customerTier == 'GOLD')]"
+      }
+    ]
+  },
+  "response": {
+    "status": 201,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "id": "ord-60",
+      "customerId": "cust-gold-multi-3",
+      "customerTier": "GOLD",
+      "status": "PENDING",
+      "discountApplied": 45.0,
+      "totalAmount": 405.0
+    }
+  }
+}

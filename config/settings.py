@@ -30,6 +30,18 @@ class Settings(BaseSettings):
     karate_project_path: str = "./karate_project"
     karate_config_path: str = "./config/karate_project.yaml"
     generated_features_dir: str = "./karate_project/src/test/java/karate/generated"
+    
+    # Execution Settings
+    java_home: str = "/Library/Java/JavaVirtualMachines/amazon-corretto-17.jdk/Contents/Home"
+    maven_execution_timeout: int = 120
+    karate_env: str = "dev"
+    karate_report_dir: str = "./karate_project/target/karate-reports"
+    
+    # Mock Server Settings
+    wiremock_jar_path: str = "./karate_project/wiremock/wiremock-standalone.jar"
+    wiremock_port: int = 8080
+    wiremock_auto_start: bool = True
+    
     log_level: str = "INFO"
 
     model_config = SettingsConfigDict(

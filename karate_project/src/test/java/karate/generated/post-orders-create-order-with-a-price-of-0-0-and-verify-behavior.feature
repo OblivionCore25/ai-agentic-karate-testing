@@ -96,4 +96,4 @@ Feature: Create Order with Zero Price - Boundary Validation
     * if (responseStatus == 400) karate.match(response.message, '#notnull')
 
     Examples:
-    | read('classpath:testdata/zero-price-boundary.csv') |
+    | read('testdata/zero-price-boundary.csv') |

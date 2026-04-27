@@ -42,4 +42,4 @@ Feature: Order Creation - Negative Item Quantity Boundary Validation
     And match response.message contains '#string'
 
     Examples:
-      | read('classpath:testdata/negative-quantity-boundary.csv') |
+      | read('testdata/negative-quantity-boundary.csv') |

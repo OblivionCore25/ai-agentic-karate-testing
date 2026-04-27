@@ -1,0 +1,17 @@
+{
+  "request": {
+    "method": "POST",
+    "url": "/api/v1/orders",
+    "headers": {
+      "Authorization": {
+        "doesNotMatch": "Bearer test-token"
+      }
+    }
+  },
+  "response": {
+    "status": 401,
+    "jsonBody": {
+      "error": "Invalid token"
+    }
+  }
+}

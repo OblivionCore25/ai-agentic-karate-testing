@@ -107,4 +107,4 @@ Feature: GOLD Tier Order Discount Applied to Combined Total
     And match response.totalAmount == <expectedTotalAmount>
 
     Examples:
-      | read('classpath:testdata/gold-tier-multi-item-orders.csv') |
+      | read('testdata/gold-tier-multi-item-orders.csv') |

@@ -60,7 +60,7 @@ Feature: Create Standard Order - Happy Path
     # STANDARD tier always yields discountApplied = 0.0, and status is always PENDING on creation.
     # Data is sourced from testdata/standard-order-happy-path.csv
 
-    * def testData = read('classpath:testdata/standard-order-happy-path.csv')
+    * def testData = read('testdata/standard-order-happy-path.csv')
 
     Given path '/orders'
     And request
@@ -93,4 +93,4 @@ Feature: Create Standard Order - Happy Path
     And match response.id == '#notnull'
 
     Examples:
-      | read('classpath:testdata/standard-order-happy-path.csv') |
+      | read('testdata/standard-order-happy-path.csv') |

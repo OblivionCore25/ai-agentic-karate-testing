@@ -73,4 +73,4 @@ Feature: SILVER Tier Order - No Discount Applied
     And match response.totalAmount == <expectedTotalAmount>
 
     Examples:
-      | read('classpath:testdata/silver-tier-orders.csv') |
+      | read('testdata/silver-tier-orders.csv') |

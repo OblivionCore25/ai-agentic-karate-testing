@@ -48,4 +48,4 @@ Feature: Create Order - Minimum Quantity Boundary Validation
     And match response.customerId == '<customerId>'
 
     Examples:
-      | read('classpath:testdata/order-min-quantity-boundary.csv') |
+      | read('testdata/order-min-quantity-boundary.csv') |

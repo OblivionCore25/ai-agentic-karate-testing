@@ -44,7 +44,7 @@ Feature: Order Creation - customerTier Enum Validation
     # This data-driven scenario covers both valid enum values (expecting 201)
     # and invalid enum values (expecting 400), confirming the boundary of the enum constraint.
 
-    * def testData = read('classpath:testdata/customer-tier-validation.csv')
+    * def testData = read('testdata/customer-tier-validation.csv')
 
     Given path '/orders'
     And request
@@ -67,4 +67,4 @@ Feature: Order Creation - customerTier Enum Validation
     * if (<expectedStatus> == 201) karate.match(response.status, 'PENDING')
 
     Examples:
-      | read('classpath:testdata/customer-tier-validation.csv') |
+      | read('testdata/customer-tier-validation.csv') |

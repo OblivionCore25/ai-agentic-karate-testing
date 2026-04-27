@@ -15,6 +15,11 @@ from rag.retriever import ContextRetriever
 from ingestion.openapi_adapter import OpenAPIAdapter
 from ingestion.source_code_adapter import SourceCodeAdapter
 from ingestion.existing_tests_adapter import ExistingTestsAdapter
+from executor.runner import run_tests
+from metrics.collector import MetricsCollector, GenerationRun, ExecutionRun
+import time
+from datetime import datetime
+from collections import Counter
 
 app = typer.Typer(help="AI Agentic System for Automation Testing with Karate Framework")
 console = Console()
@@ -167,7 +172,26 @@ def generate(
 
     with console.status("[bold blue]Running AI agent pipeline...") as status:
         status.update("[bold blue]Step 1/3: Retrieving context...")
+        start_time = time.time()
         result = graph.invoke(initial_state)
+        gen_time = time.time() - start_time
+
+    # Record Generation Metrics
+    if result.get("scenarios") and result.get("feature_files"):
+        categories = dict(Counter([s.get("category", "unknown") for s in result.get("scenarios", [])]))
+        ks_used = len([s for s in result.get("scenarios", []) if len(s.get("knowledge_sources", [])) >= 2])
+        
+        collector = MetricsCollector()
+        collector.record_generation(GenerationRun(
+            timestamp=datetime.now().isoformat(),
+            endpoint_tag=endpoint,
+            scenarios_generated=len(result["scenarios"]),
+            features_written=len(result["feature_files"]),
+            syntactic_errors=0,
+            generation_time_seconds=gen_time,
+            categories=categories,
+            knowledge_sources_used=ks_used
+        ))
 
     # Display results
     _display_generation_results(result, settings)
@@ -198,12 +222,31 @@ def generate_auto(
     }
 
     with console.status("[bold blue]Running AI agent pipeline..."):
+        start_time = time.time()
         result = graph.invoke(initial_state)
+        gen_time = time.time() - start_time
 
     feature_files = result.get("feature_files", [])
     if feature_files:
         _write_features_to_disk(feature_files, settings)
         console.print(f"[bold green]✅ Auto-approved and saved {len(feature_files)} feature files[/bold green]")
+        
+        # Record Generation Metrics
+        if result.get("scenarios"):
+            categories = dict(Counter([s.get("category", "unknown") for s in result.get("scenarios", [])]))
+            ks_used = len([s for s in result.get("scenarios", []) if len(s.get("knowledge_sources", [])) >= 2])
+            
+            collector = MetricsCollector()
+            collector.record_generation(GenerationRun(
+                timestamp=datetime.now().isoformat(),
+                endpoint_tag=endpoint,
+                scenarios_generated=len(result["scenarios"]),
+                features_written=len(feature_files),
+                syntactic_errors=0,
+                generation_time_seconds=gen_time,
+                categories=categories,
+                knowledge_sources_used=ks_used
+            ))
     else:
         console.print("[yellow]No feature files were generated.[/yellow]")
 
@@ -272,6 +315,228 @@ def reject(
     if reason:
         msg += f" (reason: {reason})"
     console.print(msg)
+
+
+# ──────────────────────────────────────────────
+# Week 3: Execution and Analysis commands
+# ──────────────────────────────────────────────
+
+@app.command()
+def execute(
+    feature: Optional[str] = typer.Option(None, help="Specific feature file or path to execute"),
+    env: str = typer.Option("dev", help="Karate environment (e.g. dev, staging)"),
+):
+    """Execute generated Karate tests and show results."""
+    console.print(f"\n[bold cyan]🏃 Executing Karate Tests (env: {env})[/bold cyan]\n")
+    
+    with console.status("[bold blue]Running tests via Maven...") as status:
+        start_time = time.time()
+        result = run_tests(feature_path=feature, env=env)
+        exec_time = time.time() - start_time
+        
+    report = result.report
+    
+    # Record Execution Metrics
+    collector = MetricsCollector()
+    collector.record_execution(ExecutionRun(
+        timestamp=datetime.now().isoformat(),
+        total_tests=report.total,
+        passed=report.passed,
+        failed=report.failed,
+        failure_classifications={},  # Just execution, no analysis here
+        self_corrections_attempted=0,
+        self_corrections_succeeded=0,
+        execution_time_seconds=exec_time
+    ))
+    
+    # Display summary
+    if result.exit_code == 0 and report.failed == 0:
+        console.print(f"[bold green]✅ Execution Complete: All {report.total} tests passed![/bold green]")
+    else:
+        console.print(f"[bold red]❌ Execution Complete: {report.failed} failed out of {report.total} tests.[/bold red]")
+        
+    console.print(f"[dim]Duration: {report.duration_ms / 1000:.2f}s[/dim]\n")
+    
+    # Detailed results table
+    if report.scenario_results:
+        table = Table(title="Test Results")
+        table.add_column("Feature", style="cyan")
+        table.add_column("Scenario", style="magenta", max_width=40)
+        table.add_column("Status", justify="center")
+        table.add_column("Duration", justify="right", style="dim")
+        
+        for r in report.scenario_results:
+            status_emoji = "[green]PASS[/green]" if r.passed else "[red]FAIL[/red]"
+            dur_str = f"{r.duration_ms:.0f}ms"
+            
+            table.add_row(r.feature_file, r.scenario_name, status_emoji, dur_str)
+            
+            if not r.passed and r.failure_message:
+                # Add a row for the error message
+                error_msg = r.failure_message.split('\\n')[0][:100] + "..." if len(r.failure_message) > 100 else r.failure_message
+                table.add_row("", f"[dim red]└─ Error: {error_msg}[/dim red]", "", "")
+                
+        console.print(table)
+        console.print("\n[dim]See target/karate-reports/karate-summary.html for full details.[/dim]")
+
+
+@app.command("run-full")
+def run_full(
+    endpoint: str = typer.Argument(..., help="Endpoint tag, e.g. 'POST /orders'"),
+    project: str = typer.Option("", help="Target project for context filtering"),
+    env: str = typer.Option("dev", help="Karate environment for execution"),
+):
+    """Run the full agent loop: retrieve, generate, write, execute, analyze, and self-correct."""
+    settings = get_settings()
+
+    if not settings.anthropic_api_key:
+        console.print("[bold red]Error: ANTHROPIC_API_KEY is not set in .env[/bold red]")
+        raise typer.Exit(code=1)
+
+    from agents.graph import compile_graph
+    
+    console.print(f"\n[bold cyan]🚀 Starting Full Agent Loop for: {endpoint}[/bold cyan]\n")
+    
+    graph = compile_graph()
+    initial_state = {
+        "endpoint_tag": endpoint,
+        "target_project": project,
+        "retry_count": 0,
+        "reasoning_chain": [],
+    }
+
+    # Temporarily set env for the execution node
+    os.environ["KARATE_ENV"] = env
+    
+    # Since the graph might run multiple times in a loop, we just use a generic spinner
+    with console.status("[bold blue]Agent is working... (this may take a few minutes)") as status:
+        start_time = time.time()
+        result = graph.invoke(initial_state)
+        total_time = time.time() - start_time
+
+    # Clean up temp env
+    if "KARATE_ENV" in os.environ:
+        del os.environ["KARATE_ENV"]
+
+    # Record Generation Metrics
+    if result.get("scenarios") and result.get("feature_files"):
+        categories = dict(Counter([s.get("category", "unknown") for s in result.get("scenarios", [])]))
+        ks_used = len([s for s in result.get("scenarios", []) if len(s.get("knowledge_sources", [])) >= 2])
+        
+        collector = MetricsCollector()
+        collector.record_generation(GenerationRun(
+            timestamp=datetime.now().isoformat(),
+            endpoint_tag=endpoint,
+            scenarios_generated=len(result["scenarios"]),
+            features_written=len(result["feature_files"]),
+            syntactic_errors=0,
+            generation_time_seconds=total_time,
+            categories=categories,
+            knowledge_sources_used=ks_used
+        ))
+
+    # Show generated features
+    _display_generation_results(result, settings)
+    
+    # Show execution results
+    execution_results = result.get("execution_results", [])
+    if execution_results:
+        console.print("\n[bold cyan]📊 Final Execution Results[/bold cyan]")
+        passed = sum(1 for r in execution_results if r.get("passed"))
+        failed = len(execution_results) - passed
+        
+        if failed == 0:
+            console.print(f"[bold green]✅ All {passed} generated tests passed on the final run![/bold green]")
+        else:
+            console.print(f"[bold red]❌ {failed} tests failed on the final run ({passed} passed).[/bold red]")
+            
+        analysis = result.get("analysis", {})
+        counts = {}
+        if analysis and analysis.get("analyses"):
+            console.print("\n[bold yellow]🔍 Failure Analysis Breakdown[/bold yellow]")
+            
+            counts = dict(Counter(a.get("classification") for a in analysis.get("analyses", [])))
+            for classification, count in counts.items():
+                console.print(f"  - {classification}: {count}")
+
+        # Record Execution Metrics
+        collector.record_execution(ExecutionRun(
+            timestamp=datetime.now().isoformat(),
+            total_tests=passed + failed,
+            passed=passed,
+            failed=failed,
+            failure_classifications=counts,
+            self_corrections_attempted=result.get("retry_count", 0),
+            self_corrections_succeeded=1 if result.get("retry_count", 0) > 0 and failed == 0 else 0,
+            execution_time_seconds=total_time
+        ))
+
+
+@app.command()
+def metrics():
+    """Display generation and execution metrics."""
+    console.print("\n[bold cyan]📈 Karate AI Agent Metrics[/bold cyan]")
+    console.print("[dim]Note: Full persistent metrics storage is planned for Phase 2.[/dim]")
+    
+    settings = get_settings()
+    gen_dir = settings.generated_features_dir
+    
+    features = []
+    if os.path.isdir(gen_dir):
+        features = [f for f in os.listdir(gen_dir) if f.endswith(".feature")]
+        
+    store = VectorStore()
+    stats = store.get_stats()
+    approved_tests = stats.get("test", 0)
+    
+    table = Table(title="Current Workspace Stats")
+    table.add_column("Metric", style="cyan")
+    table.add_column("Value", style="magenta", justify="right")
+    
+    table.add_row("Generated Features", str(len(features)))
+    table.add_row("Approved Scenarios in KB", str(approved_tests))
+    table.add_row("API Spec Endpoints in KB", str(stats.get("spec", 0)))
+    table.add_row("Code Methods in KB", str(stats.get("code", 0)))
+    
+    console.print(table)
+
+    # Historical trends from Collector
+    collector = MetricsCollector()
+    records = collector.get_all_records()
+    gen_records = [r for r in records if r["type"] == "generation"]
+    exec_records = [r for r in records if r["type"] == "execution"]
+    
+    if gen_records or exec_records:
+        console.print("\n[bold cyan]📊 Historical Trends[/bold cyan]")
+        trend_table = Table(title="Pipeline Effectiveness")
+        trend_table.add_column("Metric", style="cyan")
+        trend_table.add_column("Value", style="magenta", justify="right")
+        
+        if gen_records:
+            avg_gen_time = sum(r["generation_time_seconds"] for r in gen_records) / len(gen_records)
+            trend_table.add_row("Total Generation Runs", str(len(gen_records)))
+            trend_table.add_row("Avg Generation Time", f"{avg_gen_time:.1f}s")
+            
+            total_scenarios = sum(r["scenarios_generated"] for r in gen_records)
+            if total_scenarios > 0:
+                ks_used = sum(r.get("knowledge_sources_used", 0) for r in gen_records)
+                trend_table.add_row("Knowledge Source Utilization (>2)", f"{(ks_used/total_scenarios)*100:.1f}%")
+                
+        if exec_records:
+            total_execs = len(exec_records)
+            total_tests = sum(r["total_tests"] for r in exec_records)
+            total_passed = sum(r["passed"] for r in exec_records)
+            
+            trend_table.add_row("Total Execution Runs", str(total_execs))
+            if total_tests > 0:
+                trend_table.add_row("Overall Pass Rate", f"{(total_passed/total_tests)*100:.1f}%")
+                
+            total_corrections = sum(r.get("self_corrections_attempted", 0) for r in exec_records)
+            successful_corrections = sum(r.get("self_corrections_succeeded", 0) for r in exec_records)
+            if total_corrections > 0:
+                trend_table.add_row("Self-Correction Rate", f"{(successful_corrections/total_corrections)*100:.1f}%")
+                
+        console.print(trend_table)
 
 
 # ──────────────────────────────────────────────

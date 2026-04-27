@@ -41,7 +41,7 @@ Feature: Order Creation - Large Quantity Boundary Test
     * if (!isSuccess) match response contains { error: '#notnull' }
 
     Examples:
-      | read('classpath:testdata/large-quantity-orders.csv') |
+      | read('testdata/large-quantity-orders.csv') |
 
 
 

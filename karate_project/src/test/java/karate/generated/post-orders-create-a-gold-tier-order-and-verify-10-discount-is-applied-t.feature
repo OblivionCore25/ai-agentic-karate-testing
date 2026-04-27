@@ -78,4 +78,4 @@ Feature: GOLD Tier Order Discount Business Rule
     And match response.id == '#notnull'
 
     Examples:
-      | read('classpath:testdata/gold-tier-discount-orders.csv') |
+      | read('testdata/gold-tier-discount-orders.csv') |

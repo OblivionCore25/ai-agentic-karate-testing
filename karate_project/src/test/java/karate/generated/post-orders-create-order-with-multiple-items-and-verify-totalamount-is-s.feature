@@ -63,4 +63,4 @@ Feature: Order Total Amount Calculation
     And match response.items == '#[3]'
 
     Examples:
-      | read('classpath:testdata/order-multi-item-totals.csv') |
+      | read('testdata/order-multi-item-totals.csv') |

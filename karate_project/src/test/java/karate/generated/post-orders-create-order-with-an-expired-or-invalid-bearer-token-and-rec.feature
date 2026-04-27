@@ -46,4 +46,4 @@ Feature: Order Creation Security - Invalid Bearer Token Authentication
     And match response == '#notnull'
 
     Examples:
-      | read('classpath:testdata/invalid-token-scenarios.csv') |
+      | read('testdata/invalid-token-scenarios.csv') |

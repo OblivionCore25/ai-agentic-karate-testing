@@ -42,7 +42,7 @@ Feature: Order Validation - Missing Required Item Fields
     # Business Rule: All three item fields (productId, quantity, price) are required.
     # This data-driven scenario validates that omitting any required item field returns HTTP 400.
 
-    * def testData = read('classpath:testdata/order-missing-item-fields.csv')
+    * def testData = read('testdata/order-missing-item-fields.csv')
 
     Given path '/orders'
     And request

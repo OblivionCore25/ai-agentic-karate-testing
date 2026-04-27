@@ -42,4 +42,4 @@ Feature: Order Validation - Missing Required Fields
     And match response.message == '#notnull'
 
     Examples:
-      | read('classpath:testdata/order-missing-items-validation.csv') |
+      | read('testdata/order-missing-items-validation.csv') |
