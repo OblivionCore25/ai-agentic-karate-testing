@@ -143,6 +143,18 @@ def retrieve(query: str = typer.Argument(..., help="Endpoint tag or natural lang
 
 
 # ──────────────────────────────────────────────
+# LLM provider helpers
+# ──────────────────────────────────────────────
+
+def _check_llm_api_key(settings) -> bool:
+    """Check if the API key is configured for the active LLM provider."""
+    if settings.llm_provider == "openai":
+        return bool(settings.openai_api_key)
+    else:  # anthropic
+        return bool(settings.anthropic_api_key)
+
+
+# ──────────────────────────────────────────────
 # Week 2: Generation commands
 # ──────────────────────────────────────────────
 
@@ -154,8 +166,9 @@ def generate(
     """Generate Karate test features for an endpoint using AI."""
     settings = get_settings()
 
-    if not settings.anthropic_api_key:
-        console.print("[bold red]Error: ANTHROPIC_API_KEY is not set in .env[/bold red]")
+    if not _check_llm_api_key(settings):
+        console.print("[bold red]Error: API key not set for the configured LLM provider.[/bold red]")
+        console.print(f"[dim]Provider: {settings.llm_provider}. Set the appropriate API key in .env[/dim]")
         raise typer.Exit(code=1)
 
     from agents.graph import compile_graph
@@ -205,8 +218,9 @@ def generate_auto(
     """Generate and auto-approve Karate test features (non-interactive)."""
     settings = get_settings()
 
-    if not settings.anthropic_api_key:
-        console.print("[bold red]Error: ANTHROPIC_API_KEY is not set in .env[/bold red]")
+    if not _check_llm_api_key(settings):
+        console.print("[bold red]Error: API key not set for the configured LLM provider.[/bold red]")
+        console.print(f"[dim]Provider: {settings.llm_provider}. Set the appropriate API key in .env[/dim]")
         raise typer.Exit(code=1)
 
     from agents.graph import compile_graph
@@ -389,8 +403,9 @@ def run_full(
     """Run the full agent loop: retrieve, generate, write, execute, analyze, and self-correct."""
     settings = get_settings()
 
-    if not settings.anthropic_api_key:
-        console.print("[bold red]Error: ANTHROPIC_API_KEY is not set in .env[/bold red]")
+    if not _check_llm_api_key(settings):
+        console.print("[bold red]Error: API key not set for the configured LLM provider.[/bold red]")
+        console.print(f"[dim]Provider: {settings.llm_provider}. Set the appropriate API key in .env[/dim]")
         raise typer.Exit(code=1)
 
     from agents.graph import compile_graph

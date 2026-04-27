@@ -4,12 +4,11 @@ Result Analyzer — LangGraph node that classifies test failures and suggests fi
 import logging
 from typing import Dict, Any, List
 
-from langchain_anthropic import ChatAnthropic
 from langchain_core.messages import SystemMessage, HumanMessage
 
 from agents.state import AgentState, FailureAnalysis, FailureReport
 from agents.prompts.result_analysis import SYSTEM_PROMPT, build_user_prompt
-from config.settings import get_settings
+from config.settings import get_settings, get_llm
 
 logger = logging.getLogger("karate_ai.agents")
 
@@ -66,12 +65,7 @@ def analyze_results(state: AgentState) -> Dict[str, Any]:
         context_text = f"## API Spec\n{spec_text}\n\n## Source Code\n{code_text}"
 
     # Setup LLM
-    llm = ChatAnthropic(
-        model=settings.claude_model_analysis, # Haiku is fine for classification
-        api_key=settings.anthropic_api_key,
-        temperature=settings.llm_temperature_analysis,
-        max_tokens=settings.llm_max_tokens_analysis,
-    ).with_structured_output(FailureReport)
+    llm = get_llm("analysis").with_structured_output(FailureReport)
 
     analyses = []
     has_test_issues = False

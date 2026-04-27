@@ -90,7 +90,7 @@ MOCK_SCENARIOS = ScenarioList(scenarios=[
 ])
 
 
-@patch("agents.scenario_generator.ChatAnthropic")
+@patch("agents.scenario_generator.get_llm")
 def test_generate_scenarios_mocked(mock_llm_class):
     """Test scenario generation with mocked LLM."""
     # Setup mock
@@ -129,7 +129,7 @@ def test_generate_scenarios_mocked(mock_llm_class):
     mock_structured.invoke.assert_called_once()
 
 
-@patch("agents.scenario_generator.ChatAnthropic")
+@patch("agents.scenario_generator.get_llm")
 def test_generate_scenarios_empty_context(mock_llm_class):
     """Test scenario generation with empty context package."""
     empty_package = ContextPackage(endpoint_tag="", query="POST /orders")
@@ -151,7 +151,7 @@ def test_generate_scenarios_empty_context(mock_llm_class):
     mock_llm_class.assert_not_called()
 
 
-@patch("agents.scenario_generator.ChatAnthropic")
+@patch("agents.scenario_generator.get_llm")
 def test_generate_scenarios_no_context_package(mock_llm_class):
     """Test scenario generation with no context package at all."""
     state: AgentState = {

@@ -73,7 +73,7 @@ def test_extract_no_companions():
     assert cleaned == raw
 
 
-@patch("agents.feature_writer.ChatAnthropic")
+@patch("agents.feature_writer.get_llm")
 def test_write_features_mocked(mock_llm_class):
     """Test feature writing with mocked LLM."""
     mock_instance = MagicMock()
@@ -124,7 +124,7 @@ def test_write_features_mocked(mock_llm_class):
     mock_instance.invoke.assert_called_once()
 
 
-@patch("agents.feature_writer.ChatAnthropic")
+@patch("agents.feature_writer.get_llm")
 def test_write_features_empty_scenarios(mock_llm_class):
     """Test feature writing with no scenarios."""
     state: AgentState = {

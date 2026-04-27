@@ -6,13 +6,12 @@ import logging
 import re
 from typing import Dict, Any, List
 
-from langchain_anthropic import ChatAnthropic
 from langchain_core.messages import SystemMessage, HumanMessage
 
 from agents.state import AgentState, TestScenario, GeneratedFeature
 from agents.feature_validator import validate_feature
 from agents.prompts.feature_writing import SYSTEM_PROMPT, build_user_prompt
-from config.settings import get_settings
+from config.settings import get_settings, get_llm
 
 logger = logging.getLogger("karate_ai")
 
@@ -129,12 +128,7 @@ def write_features(state: AgentState) -> Dict[str, Any]:
         reference_text = _truncate(_format_chunks(context_package.reference_context))
         test_patterns_text = _truncate(_format_chunks(context_package.test_context))
 
-    llm = ChatAnthropic(
-        model=settings.claude_model_generation,
-        api_key=settings.anthropic_api_key,
-        temperature=settings.llm_temperature_analysis,  # Lower temp for deterministic syntax
-        max_tokens=settings.llm_max_tokens_generation,
-    )
+    llm = get_llm("generation")
 
     feature_files = []
 

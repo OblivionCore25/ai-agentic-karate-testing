@@ -5,12 +5,11 @@ import json
 import logging
 from typing import Dict, Any
 
-from langchain_anthropic import ChatAnthropic
 from langchain_core.messages import SystemMessage, HumanMessage
 
 from agents.state import AgentState, ScenarioList
 from agents.prompts.scenario_generation import SYSTEM_PROMPT, build_user_prompt
-from config.settings import get_settings
+from config.settings import get_settings, get_llm
 
 logger = logging.getLogger("karate_ai")
 
@@ -74,15 +73,10 @@ def generate_scenarios(state: AgentState) -> Dict[str, Any]:
         source_files.add(chunk.source_file)
     reasoning_chain.append(f"Scenario generation using sources: {', '.join(sorted(source_files))}")
 
-    logger.info(f"Generating scenarios for {endpoint_tag} using Claude {settings.claude_model_generation}")
+    logger.info(f"Generating scenarios for {endpoint_tag} using {settings.llm_provider} provider")
 
     try:
-        llm = ChatAnthropic(
-            model=settings.claude_model_generation,
-            api_key=settings.anthropic_api_key,
-            temperature=settings.llm_temperature_generation,
-            max_tokens=settings.llm_max_tokens_generation,
-        )
+        llm = get_llm("generation")
 
         messages = [
             SystemMessage(content=SYSTEM_PROMPT),
