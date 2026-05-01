@@ -20,7 +20,8 @@ class VectorStore:
             "spec": "api_specs",
             "code": "source_code",
             "test": "existing_tests",
-            "reference": "karate_reference"
+            "reference": "karate_reference",
+            "schema": "db_schemas"
         }
 
     def initialize(self):

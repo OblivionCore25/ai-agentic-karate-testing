@@ -16,6 +16,12 @@ function fn() {
       config.baseUrl = 'https://e2e.example.com/api/v1';
     }
     
+    // ── Database connection for JDBC verification steps ──
+    config.dbUrl = karate.properties['db.url'] || 'jdbc:postgresql://localhost:5434/orders_db';
+    config.dbUser = karate.properties['db.user'] || 'karate';
+    config.dbPassword = karate.properties['db.password'] || 'karate_pass';
+    config.dbDriverClassName = 'org.postgresql.Driver';
+    
     // don't waste time waiting for a connection or if servers don't respond within 5 seconds
     karate.configure('connectTimeout', 5000);
     karate.configure('readTimeout', 5000);

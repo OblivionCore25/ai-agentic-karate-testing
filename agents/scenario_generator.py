@@ -58,18 +58,20 @@ def generate_scenarios(state: AgentState) -> Dict[str, Any]:
     spec_text = _truncate(_format_chunks(context_package.spec_context))
     code_text = _truncate(_format_chunks(context_package.code_context))
     test_text = _truncate(_format_chunks(context_package.test_context))
+    schema_text = _truncate(_format_chunks(context_package.schema_context))
 
     user_prompt = build_user_prompt(
         endpoint_tag=endpoint_tag or context_package.endpoint_tag,
         spec_context=spec_text,
         code_context=code_text,
         test_context=test_text,
-        dominant_data_pattern=dominant_data_pattern
+        dominant_data_pattern=dominant_data_pattern,
+        schema_context=schema_text
     )
 
     # Track which sources were used
     source_files = set()
-    for chunk in (context_package.spec_context + context_package.code_context + context_package.test_context):
+    for chunk in (context_package.spec_context + context_package.code_context + context_package.test_context + context_package.schema_context):
         source_files.add(chunk.source_file)
     reasoning_chain.append(f"Scenario generation using sources: {', '.join(sorted(source_files))}")
 

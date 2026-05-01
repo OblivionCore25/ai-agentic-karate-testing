@@ -19,7 +19,7 @@ class Settings(BaseSettings):
     # Shared LLM Settings
     llm_temperature_generation: float = 0.5
     llm_temperature_analysis: float = 0.2
-    llm_max_tokens_generation: int = 8192
+    llm_max_tokens_generation: int = 16384
     llm_max_tokens_analysis: int = 4096
     max_retry_count: int = 2
     
@@ -34,6 +34,7 @@ class Settings(BaseSettings):
     retrieval_top_k_code: int = 10
     retrieval_top_k_test: int = 5
     retrieval_top_k_reference: int = 5
+    retrieval_top_k_schema: int = 3
     relevance_threshold: float = 0.3
     
     # Project Settings
@@ -51,6 +52,11 @@ class Settings(BaseSettings):
     wiremock_jar_path: str = "./karate_project/wiremock/wiremock-standalone.jar"
     wiremock_port: int = 8080
     wiremock_auto_start: bool = True
+    
+    # Database Schema Ingestion
+    db_connection_string: str = ""
+    db_schema: str = "public"
+    db_table_filter: str = ""  # comma-separated table names, empty = all
     
     log_level: str = "INFO"
 

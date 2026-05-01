@@ -70,6 +70,7 @@ def ingest(
     karate_examples: str = typer.Option(..., help="Path to Karate syntax examples"),
     project: str = typer.Option("", help="Project identifier for metadata tagging"),
     domain: str = typer.Option("", help="Domain identifier for metadata tagging"),
+    db: str = typer.Option("", help="PostgreSQL connection string for schema ingestion"),
 ):
     """Run full ingestion pipeline."""
     with console.status("[bold blue]Ingesting knowledge base...") as status:
@@ -92,8 +93,90 @@ def ingest(
         ref_chunks = ExistingTestsAdapter().ingest(karate_examples)
         store.add_documents("reference", ref_chunks)
 
+        # Optional: Database schema ingestion
+        db_conn = db or get_settings().db_connection_string
+        if db_conn:
+            status.update("[bold blue]Ingesting database schema...")
+            from ingestion.db_schema_adapter import DatabaseSchemaAdapter
+            settings = get_settings()
+            table_filter = None
+            if settings.db_table_filter:
+                table_filter = [t.strip() for t in settings.db_table_filter.split(",")]
+            adapter = DatabaseSchemaAdapter(
+                connection_string=db_conn,
+                schema=settings.db_schema,
+                table_filter=table_filter,
+            )
+            try:
+                schema_chunks = adapter.ingest()
+                store.add_documents("schema", schema_chunks)
+                console.print(f"[green]Ingested {len(schema_chunks)} table schemas.[/green]")
+            except Exception as e:
+                console.print(f"[yellow]⚠️  Schema ingestion failed: {e}[/yellow]")
+            finally:
+                adapter.close()
+
     console.print("[bold green]Full ingestion complete![/bold green]")
     stats()
+
+
+@app.command("ingest-schema")
+def ingest_schema(
+    connection: str = typer.Option("", help="PostgreSQL connection string (overrides .env)"),
+    schema: str = typer.Option("public", help="Database schema to introspect"),
+    tables: str = typer.Option("", help="Comma-separated table filter (empty = all)"),
+):
+    """Ingest PostgreSQL database schema into the knowledge base."""
+    settings = get_settings()
+    conn_str = connection or settings.db_connection_string
+
+    if not conn_str:
+        console.print(
+            "[bold red]Error: No database connection string provided.[/bold red]\n"
+            "[dim]Set DB_CONNECTION_STRING in .env or pass --connection[/dim]"
+        )
+        raise typer.Exit(code=1)
+
+    table_filter = None
+    if tables:
+        table_filter = [t.strip() for t in tables.split(",")]
+    elif settings.db_table_filter:
+        table_filter = [t.strip() for t in settings.db_table_filter.split(",")]
+
+    from ingestion.db_schema_adapter import DatabaseSchemaAdapter
+
+    console.print(f"\n[bold cyan]🗄️  Introspecting database schema '{schema}'[/bold cyan]\n")
+
+    adapter = DatabaseSchemaAdapter(
+        connection_string=conn_str,
+        schema=schema,
+        table_filter=table_filter,
+    )
+
+    try:
+        with console.status("[bold blue]Connecting and introspecting...") as status:
+            chunks = adapter.ingest()
+
+        if not chunks:
+            console.print("[yellow]No tables found matching the filter.[/yellow]")
+            return
+
+        store = VectorStore()
+        store.add_documents("schema", chunks)
+
+        console.print(f"[bold green]✅ Ingested {len(chunks)} table schemas:[/bold green]")
+        for chunk in chunks:
+            table_name = chunk.metadata.get("table_name", "unknown")
+            col_count = chunk.metadata.get("column_count", 0)
+            has_fk = "🔗" if chunk.metadata.get("has_foreign_keys") else ""
+            console.print(f"  - {table_name} ({col_count} columns) {has_fk}")
+
+    except Exception as e:
+        console.print(f"[bold red]Error: {e}[/bold red]")
+        raise typer.Exit(code=1)
+    finally:
+        adapter.close()
+
 
 
 @app.command()

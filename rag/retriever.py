@@ -15,9 +15,10 @@ class ContextPackage:
     code_context: List[IngestedChunk] = field(default_factory=list)
     test_context: List[IngestedChunk] = field(default_factory=list)
     reference_context: List[IngestedChunk] = field(default_factory=list)
+    schema_context: List[IngestedChunk] = field(default_factory=list)
 
     def is_empty(self) -> bool:
-        return not (self.spec_context or self.code_context or self.test_context or self.reference_context)
+        return not (self.spec_context or self.code_context or self.test_context or self.reference_context or self.schema_context)
 
     @property
     def dominant_data_pattern(self) -> str:
@@ -88,7 +89,12 @@ class ContextRetriever:
             "reference", query, self.settings.retrieval_top_k_reference
         )
 
-        all_results = spec_results + code_results + test_results + reference_results
+        # Schema context (if available)
+        schema_results = self.vector_store.query(
+            "schema", query, self.settings.retrieval_top_k_schema
+        )
+
+        all_results = spec_results + code_results + test_results + reference_results + schema_results
 
         # Rerank with project affinity
         reranker = Reranker(target_project=project)
@@ -112,5 +118,7 @@ class ContextRetriever:
                 package.test_context.append(chunk)
             elif chunk.origin_type == "reference":
                 package.reference_context.append(chunk)
+            elif chunk.origin_type == "schema":
+                package.schema_context.append(chunk)
 
         return package

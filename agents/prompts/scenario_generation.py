@@ -10,12 +10,32 @@ would be missed by spec-only test generation.
 You always produce structured JSON output following the exact schema requested."""
 
 
+def _build_schema_section(schema_context: str) -> str:
+    """Build the database schema prompt section if schema context is available."""
+    if not schema_context or schema_context.strip() == "(no context available)":
+        return ""
+    return f"""
+## Database Schema Context
+The following database tables are related to this endpoint.
+Use this to identify additional test scenarios based on:
+- NOT NULL constraints (what happens when nullable fields are omitted vs. non-nullable?)
+- Foreign key relationships (referential integrity — use IDs that don't exist in referenced tables)
+- CHECK constraints (boundary testing for constrained values, e.g., ENUM values, numeric ranges)
+- Column types (type mismatch tests, overflow values for NUMERIC precision)
+- Default values (verify API response reflects DB defaults when fields are omitted)
+- Unique constraints (duplicate value tests)
+
+{schema_context}
+"""
+
+
 def build_user_prompt(
     endpoint_tag: str,
     spec_context: str,
     code_context: str,
     test_context: str,
-    dominant_data_pattern: str = "inline_examples"
+    dominant_data_pattern: str = "inline_examples",
+    schema_context: str = ""
 ) -> str:
     data_pattern_instruction = ""
     if dominant_data_pattern == "csv_read":
@@ -40,7 +60,7 @@ Include a variety of valid and invalid data combinations."""
 ## Existing Test Patterns
 {test_context}
 {data_pattern_instruction}
-
+{_build_schema_section(schema_context)}
 Generate a comprehensive list of test scenarios. For each scenario provide:
 1. **name**: Descriptive, Gherkin-style scenario name
 2. **category**: One of: happy_path, business_rule, validation, error_handling, boundary, security

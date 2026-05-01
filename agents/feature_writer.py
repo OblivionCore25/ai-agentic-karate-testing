@@ -124,9 +124,11 @@ def write_features(state: AgentState) -> Dict[str, Any]:
     # Get reference and test patterns for the prompt
     reference_text = ""
     test_patterns_text = ""
+    schema_text = ""
     if context_package:
         reference_text = _truncate(_format_chunks(context_package.reference_context))
         test_patterns_text = _truncate(_format_chunks(context_package.test_context))
+        schema_text = _truncate(_format_chunks(context_package.schema_context))
 
     llm = get_llm("generation")
 
@@ -142,6 +144,7 @@ def write_features(state: AgentState) -> Dict[str, Any]:
             existing_test_patterns=test_patterns_text,
             dominant_data_pattern=dominant_data_pattern,
             endpoint_tag=endpoint_tag,
+            schema_context=schema_text,
         )
 
         logger.info(f"Writing feature for scenario: {scenario.name}")

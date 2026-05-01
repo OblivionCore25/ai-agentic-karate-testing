@@ -73,3 +73,69 @@ def chunk_for_test(scenario_data: Dict[str, Any]) -> str:
         lines.append(f"  {step}")
 
     return "\n".join(lines)
+
+def chunk_for_schema(table_info: Dict[str, Any]) -> str:
+    """Formats database table metadata into a readable text block for embedding."""
+    lines = []
+    lines.append(f"Table: {table_info['table_name']} (schema: {table_info.get('schema', 'public')})")
+
+    if table_info.get('comment'):
+        lines.append(f"Description: {table_info['comment']}")
+
+    lines.append("")
+    lines.append("Columns:")
+    for col in table_info.get('columns', []):
+        annotations = []
+
+        if col.get('is_primary_key'):
+            annotations.append("PK")
+        if not col.get('nullable', True):
+            annotations.append("NOT NULL")
+        if col.get('is_unique'):
+            annotations.append("UNIQUE")
+        if col.get('default'):
+            annotations.append(f"DEFAULT {col['default']}")
+        if col.get('is_foreign_key') and col.get('foreign_key_ref'):
+            ref = col['foreign_key_ref']
+            annotations.append(f"FK → {ref['referred_table']}.{ref['referred_column']}")
+
+        ann_str = f" [{', '.join(annotations)}]" if annotations else ""
+        comment_str = f"  -- {col['comment']}" if col.get('comment') else ""
+        lines.append(f"  - {col['name']}: {col['type']}{ann_str}{comment_str}")
+
+    # Check constraints
+    checks = table_info.get('check_constraints', [])
+    if checks:
+        lines.append("")
+        lines.append("Check Constraints:")
+        for cc in checks:
+            name = cc.get('name', 'unnamed')
+            expr = cc.get('sqltext', cc.get('expression', ''))
+            lines.append(f"  - {name}: {expr}")
+
+    # Indexes
+    indexes = table_info.get('indexes', [])
+    if indexes:
+        lines.append("")
+        lines.append("Indexes:")
+        for idx in indexes:
+            cols = ', '.join(idx.get('column_names', []))
+            unique_str = " [UNIQUE]" if idx.get('unique') else ""
+            lines.append(f"  - {idx.get('name', 'unnamed')} ON ({cols}){unique_str}")
+
+    # Foreign key relationships (summary)
+    fks = table_info.get('foreign_keys', [])
+    if fks:
+        lines.append("")
+        lines.append("Foreign Keys:")
+        for fk in fks:
+            src_cols = ', '.join(fk.get('constrained_columns', []))
+            ref_table = fk.get('referred_table', '')
+            ref_cols = ', '.join(fk.get('referred_columns', []))
+            options = fk.get('options', {})
+            on_delete = f" ON DELETE {options['ondelete']}" if options.get('ondelete') else ""
+            on_update = f" ON UPDATE {options['onupdate']}" if options.get('onupdate') else ""
+            lines.append(f"  - {src_cols} → {ref_table}.{ref_cols}{on_delete}{on_update}")
+
+    return "\n".join(lines)
+
