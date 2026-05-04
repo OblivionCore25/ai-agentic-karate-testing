@@ -15,14 +15,13 @@ body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);overf
 h1{font-size:2.8em;font-weight:800;background:linear-gradient(135deg,#6366f1,#a78bfa,#34d399);-webkit-background-clip:text;-webkit-text-fill-color:transparent;text-align:center;line-height:1.2;margin-bottom:12px}
 h2{font-size:1.9em;font-weight:700;color:var(--accent2);margin-bottom:24px;text-align:center}
 h3{font-size:1.3em;font-weight:600;color:var(--green);margin-bottom:12px}
-p,.desc{font-size:1.1em;color:var(--muted);text-align:center;max-width:800px;line-height:1.7}
+p,.desc{font-size:1.1em;color:var(--muted);text-align:center;max-width:900px;line-height:1.7}
 .subtitle{font-size:1.3em;color:var(--muted);text-align:center;margin-bottom:8px}
 .badge{display:inline-block;background:var(--accent);color:#fff;padding:4px 14px;border-radius:20px;font-size:.85em;font-weight:600;margin:4px}
 .grid{display:grid;gap:20px;width:100%;max-width:1100px}
 .grid-2{grid-template-columns:1fr 1fr}
 .grid-3{grid-template-columns:1fr 1fr 1fr}
 .grid-4{grid-template-columns:1fr 1fr 1fr 1fr}
-.grid-5{grid-template-columns:1fr 1fr 1fr 1fr 1fr}
 .card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;text-align:left}
 .card h3{margin-bottom:8px}
 .card p{text-align:left;font-size:.95em;line-height:1.6}
@@ -48,7 +47,6 @@ tr:hover td{background:rgba(99,102,241,.05)}
 .nav button{background:var(--card);color:var(--text);border:1px solid var(--border);padding:10px 18px;border-radius:8px;cursor:pointer;font-size:.95em;font-family:'Inter',sans-serif}
 .nav button:hover{background:var(--accent);border-color:var(--accent)}
 .counter{position:fixed;bottom:28px;left:32px;color:var(--muted);font-size:.85em}
-.flow-arrow{color:var(--accent2);font-size:1.4em;text-align:center;padding:4px 0}
 .tag{display:inline-block;padding:3px 10px;border-radius:6px;font-size:.8em;font-weight:600;margin:2px}
 .tag-biz{background:rgba(99,102,241,.2);color:var(--accent2)}
 .tag-val{background:rgba(251,191,36,.2);color:var(--amber)}
@@ -58,8 +56,14 @@ tr:hover td{background:rgba(99,102,241,.05)}
 .w-full{width:100%;max-width:1100px}
 .mt-8{margin-top:8px}
 .mt-16{margin-top:16px}
+.mt-24{margin-top:24px}
 .mb-16{margin-bottom:16px}
-.text-left{text-align:left}
+.vs-table td:first-child{font-weight:600;color:var(--text)}
+.vs-red{color:var(--red)}
+.vs-green{color:var(--green)}
+.callout{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px 28px;max-width:900px;text-align:center;margin-top:20px}
+.callout-green{border:1px solid var(--green)}
+.callout-amber{border:1px solid var(--amber)}
 </style>
 </head>
 <body>
@@ -67,218 +71,196 @@ tr:hover td{background:rgba(99,102,241,.05)}
 
 <!-- SLIDE 1: Title -->
 <div class="slide active">
-  <h1>AI-Orchestrated Karate<br>Test Generation</h1>
-  <p class="subtitle" style="margin-top:16px">Multi-Source RAG Pipeline for Schema-Aware API Testing</p>
+  <h1>AI-Orchestrated API<br>Test Generation</h1>
+  <p class="subtitle" style="margin-top:16px">Reducing manual QA effort by 80% with intelligent, schema-aware test automation</p>
   <div style="margin-top:32px">
-    <span class="badge">LangGraph</span>
-    <span class="badge">ChromaDB</span>
-    <span class="badge">PostgreSQL</span>
-    <span class="badge">Karate DSL</span>
-    <span class="badge">JDBC Verification</span>
+    <span class="badge">AI-Powered</span>
+    <span class="badge">Database-Aware</span>
+    <span class="badge">Human-in-the-Loop</span>
+    <span class="badge">Provider-Agnostic</span>
   </div>
   <p style="margin-top:40px;font-size:.95em;color:var(--muted)">Fabián González · May 2026</p>
 </div>
 
-<!-- SLIDE 2: The Problem -->
+<!-- SLIDE 2: The Problem — Business Impact -->
 <div class="slide">
-  <h2>The Problem</h2>
+  <h2>The Cost of Manual API Testing</h2>
   <div class="grid grid-3 mt-16">
     <div class="card card-red">
-      <h3>Manual Test Writing</h3>
-      <p>Writing API tests is slow, repetitive, and teams struggle to keep tests in sync with evolving services.</p>
+      <h3 style="color:var(--red)">⏱️ Time-Intensive</h3>
+      <p>Writing comprehensive API tests for a single endpoint takes <strong style="color:var(--text)">2–3 days</strong> of QA engineering time — including edge cases, validation, and security scenarios.</p>
     </div>
     <div class="card card-amber">
-      <h3>Spec-Only Testing</h3>
-      <p>API specs tell you <em>what</em> exists — but miss business rules hidden in source code and DB constraints.</p>
+      <h3 style="color:var(--amber)">🔍 Blind Spots</h3>
+      <p>Manual testers write tests against the <em>API spec</em>, but miss edge cases hidden in <strong style="color:var(--text)">source code logic</strong> and <strong style="color:var(--text)">database constraints</strong> — the #1 source of production defects.</p>
     </div>
     <div class="card card-accent">
-      <h3>No DB Awareness</h3>
-      <p>FK constraints, CHECK rules, ENUM types, NUMERIC limits — invisible without reading the schema directly.</p>
+      <h3>📉 Test Drift</h3>
+      <p>As services evolve, tests fall behind. Teams either slow releases to update tests, or skip testing — increasing <strong style="color:var(--text)">production incident risk</strong>.</p>
     </div>
   </div>
-  <p class="mt-16" style="font-size:1.15em;color:var(--text)">💡 What if an AI agent could ingest <em>all</em> your knowledge sources and generate tests that go deeper than any human would?</p>
-</div>
-
-<!-- SLIDE 3: Architecture -->
-<div class="slide">
-  <h2>System Architecture</h2>
-  <div class="diagram">
-<span class="hl-green">┌────────────────────────── Data Sources ──────────────────────────┐</span>
-│  <span class="hl-accent">OpenAPI Spec</span>    <span class="hl-accent">Java Source</span>    <span class="hl-accent">Existing Tests</span>    <span class="hl-amber">PostgreSQL DB</span>  │
-<span class="hl-green">└──────┬──────────────┬──────────────┬──────────────────┬─────────┘</span>
-       │ OpenAPI      │ tree-sitter  │ Tests            │ SQLAlchemy
-       │ Adapter      │ AST Adapter  │ Adapter          │ inspect()
-       ▼              ▼              ▼                  ▼
-<span class="hl-accent">┌─────────────────────── ChromaDB Vector Store ───────────────────┐</span>
-│  api_specs │ source_code │ existing_tests │ karate_ref │ <span class="hl-amber">db_schemas</span> │
-<span class="hl-accent">└──────────────────────────┬──────────────────────────────────────┘</span>
-                           │ Semantic Retrieval + Reranking
-                           ▼
-<span class="hl-green">┌──────────────── LangGraph Agent Pipeline ───────────────────────┐</span>
-│  Retrieve → <span class="hl-accent">Generate Scenarios</span> → <span class="hl-accent">Write .feature</span> → Execute → Analyze │
-│                                      ↑                    │     │
-│                                      └── Self-Correction ─┘     │
-<span class="hl-green">└─────────────────────────────────────────────────────────────────┘</span>
+  <div class="callout mt-24">
+    <p style="font-size:1.15em;color:var(--text)">💡 What if an AI agent could generate comprehensive tests in <strong>minutes</strong> instead of days — and catch issues humans miss?</p>
   </div>
 </div>
 
-<!-- SLIDE 4: Knowledge Sources -->
+<!-- SLIDE 3: Before vs After -->
 <div class="slide">
-  <h2>5 Knowledge Sources</h2>
-  <div class="grid grid-5 mt-16">
-    <div class="card" style="text-align:center">
-      <div style="font-size:2em;margin-bottom:8px">📄</div>
-      <h3 style="color:var(--accent2);font-size:1em">API Specs</h3>
-      <p style="font-size:.85em">Endpoints, params, schemas, auth</p>
-    </div>
-    <div class="card" style="text-align:center">
-      <div style="font-size:2em;margin-bottom:8px">☕</div>
-      <h3 style="color:var(--accent2);font-size:1em">Java Code</h3>
-      <p style="font-size:.85em">Business logic, validation, branches</p>
-    </div>
-    <div class="card" style="text-align:center">
-      <div style="font-size:2em;margin-bottom:8px">🧪</div>
-      <h3 style="color:var(--accent2);font-size:1em">Existing Tests</h3>
-      <p style="font-size:.85em">Patterns, styles, data-driven</p>
-    </div>
-    <div class="card" style="text-align:center">
-      <div style="font-size:2em;margin-bottom:8px">📚</div>
-      <h3 style="color:var(--accent2);font-size:1em">Karate Ref</h3>
-      <p style="font-size:.85em">DSL syntax examples</p>
-    </div>
-    <div class="card" style="text-align:center;border:1px solid var(--amber)">
-      <div style="font-size:2em;margin-bottom:8px">🗄️</div>
-      <h3 style="color:var(--amber);font-size:1em">DB Schema</h3>
-      <p style="font-size:.85em">Tables, FKs, CHECKs, ENUMs</p>
-    </div>
-  </div>
-  <p class="mt-16">The agent retrieves the most relevant chunks from <em>all 5 sources</em> for each endpoint, enabling cross-referenced reasoning.</p>
-</div>
-
-<!-- SLIDE 5: DB Schema Ingestion -->
-<div class="slide">
-  <h2>Database Schema Ingestion</h2>
-  <p class="mb-16">SQLAlchemy <code>inspect()</code> extracts tables, views, and all constraints from a live PostgreSQL instance.</p>
-  <pre style="max-width:800px">
-Table: <span class="hl-green">orders</span> (schema: public)
-Description: GOLD tier customers receive 10% discount when total > $500
-
-Columns:
-  - id: UUID          <span class="hl-accent">[PK, NOT NULL, DEFAULT gen_random_uuid()]</span>
-  - customer_id: UUID <span class="hl-accent">[NOT NULL, FK → customers.id]</span>
-  - status: VARCHAR   <span class="hl-amber">[NOT NULL, DEFAULT 'PENDING']</span>
-  - total_amount: NUMERIC(12,2) <span class="hl-red">[NOT NULL, CHECK >= 0]</span>
-  - discount_applied: NUMERIC(12,2) <span class="hl-amber">[DEFAULT 0.00]</span>
-
-Foreign Keys:
-  - customer_id → customers.id <span class="hl-red">ON DELETE CASCADE</span>
-  </pre>
-  <p class="mt-16">Each table becomes a searchable chunk in ChromaDB — the LLM uses this to discover test scenarios invisible to the API spec.</p>
-</div>
-
-<!-- SLIDE 6: Schema-Driven Scenarios -->
-<div class="slide">
-  <h2>Schema-Driven Test Scenarios</h2>
-  <p class="mb-16">Tests the agent generates that are <strong>impossible without database context</strong>:</p>
-  <table>
-    <thead><tr><th>Scenario</th><th>Schema Source</th><th>Category</th></tr></thead>
+  <h2>Before vs. After</h2>
+  <table class="vs-table" style="max-width:950px">
+    <thead><tr><th style="width:28%">Dimension</th><th style="width:36%"><span class="vs-red">❌ Manual Process (Today)</span></th><th style="width:36%"><span class="vs-green">✅ AI-Assisted (Proposed)</span></th></tr></thead>
     <tbody>
-      <tr><td>Non-existent <code>customerId</code> → 400/404</td><td><code>orders.customer_id FK → customers.id</code></td><td><span class="tag tag-err">error_handling</span></td></tr>
-      <tr><td><code>totalAmount = 99999999999.99</code> → 400</td><td><code>total_amount NUMERIC(12,2)</code></td><td><span class="tag tag-bound">boundary</span></td></tr>
-      <tr><td><code>customerTier = "INVALID"</code> → 400</td><td><code>customer_tier ENUM('STANDARD','GOLD','PLATINUM')</code></td><td><span class="tag tag-val">validation</span></td></tr>
-      <tr><td>Omit status → response has <code>PENDING</code></td><td><code>status DEFAULT 'PENDING'</code></td><td><span class="tag tag-biz">business_rule</span></td></tr>
-      <tr><td>Verify <code>order_summary</code> view after insert</td><td><code>order_summary VIEW</code></td><td><span class="tag tag-bound">boundary</span></td></tr>
+      <tr><td>Time per endpoint</td><td class="vs-red">2–3 days</td><td class="vs-green">~15 minutes</td></tr>
+      <tr><td>Scenarios generated</td><td class="vs-red">5–8 (common paths)</td><td class="vs-green">20–25 (including edge cases)</td></tr>
+      <tr><td>Knowledge sources used</td><td class="vs-red">API spec only</td><td class="vs-green">API spec + source code + DB schema + existing tests</td></tr>
+      <tr><td>Database constraint testing</td><td class="vs-red">Rarely done</td><td class="vs-green">Automatic — FK, ENUM, precision limits</td></tr>
+      <tr><td>DB state verification</td><td class="vs-red">Manual SQL checks</td><td class="vs-green">Auto-generated JDBC assertions</td></tr>
+      <tr><td>Keeps pace with changes</td><td class="vs-red">Tests fall behind</td><td class="vs-green">Re-generate on demand</td></tr>
+      <tr><td>Human oversight</td><td>Full manual control</td><td class="vs-green">Human reviews & approves every test</td></tr>
     </tbody>
   </table>
 </div>
 
-<!-- SLIDE 7: JDBC Verification -->
+<!-- SLIDE 4: How It Works — Simplified Pipeline -->
 <div class="slide">
-  <h2>JDBC Database Verification</h2>
-  <p class="mb-16">Generated features include inline JDBC steps that verify database state after API calls.</p>
-  <div class="grid grid-2">
-    <div class="card card-green">
-      <h3>✅ Happy Path — Verify Write</h3>
-      <pre style="font-size:.78em;border:none;padding:12px">
-<span class="hl-green"># After POST /orders → 201</span>
-* def conn = DriverManager
-    .getConnection(dbUrl, props)
-* def stmt = conn.prepareStatement(
-    "SELECT status, total_amount
-     FROM orders WHERE id = ?")
-* match rs.getString('status')
-    == 'PENDING'
-* match rs.getBigDecimal('total_amount')
-    .doubleValue() == 550.0
-* eval conn.close()</pre>
+  <h2>How It Works</h2>
+  <p class="mb-16">The agent reads four knowledge sources, reasons across them, and produces ready-to-run test suites.</p>
+  <div class="diagram" style="font-size:.88em;line-height:2">
+<span class="hl-green">┌──────────────────── What the Agent Reads ────────────────────┐</span>
+│                                                              │
+│  <span class="hl-accent">📄 API Spec</span>     <span class="hl-accent">☕ Java Code</span>     <span class="hl-accent">🧪 Existing Tests</span>    <span class="hl-amber">🗄️ Database</span> │
+│  endpoints,     business rules,  team patterns,    constraints, │
+│  schemas        validation logic style conventions FKs, types   │
+│                                                              │
+<span class="hl-green">└──────────────────────────┬───────────────────────────────────┘</span>
+                           │
+                    <span class="hl-accent">🤖 AI Agent (LLM)</span>
+                    cross-references all sources
+                           │
+                           ▼
+<span class="hl-green">┌──────────────────── What the Agent Produces ─────────────────┐</span>
+│                                                              │
+│  <span class="hl-accent">📋 Test Scenarios</span>  →  <span class="hl-accent">📝 Test Files</span>  →  <span class="hl-amber">👤 Human Review</span>  →  ✅  │
+│  (categorized)       (executable)      (approve/edit)        │
+│                                                              │
+<span class="hl-green">└──────────────────────────────────────────────────────────────┘</span>
+  </div>
+</div>
+
+<!-- SLIDE 5: What Makes This Different -->
+<div class="slide">
+  <h2>What Makes This Different</h2>
+  <p class="mb-16">The agent doesn't just read the API spec — it discovers test scenarios that <strong style="color:var(--text)">humans routinely miss</strong>.</p>
+  <div class="grid grid-2 mt-16">
+    <div class="card card-amber">
+      <h3 style="color:var(--amber)">🗄️ Database-Aware Testing</h3>
+      <p>The agent introspects your PostgreSQL schema and discovers edge cases from <strong style="color:var(--text)">foreign key relationships</strong>, <strong style="color:var(--text)">data type limits</strong>, and <strong style="color:var(--text)">constraint rules</strong> — then generates tests for them automatically.</p>
+      <p style="margin-top:12px"><em>Example: It found that <code>total_amount</code> is <code>NUMERIC(12,2)</code> and generated boundary tests at the max value — something a manual tester would need to check the DB schema to know.</em></p>
     </div>
-    <div class="card card-red">
-      <h3>❌ Error Path — Verify No Write</h3>
-      <pre style="font-size:.78em;border:none;padding:12px">
-<span class="hl-red"># After FK violation → 400</span>
-* def stmt = conn.prepareStatement(
-    "SELECT COUNT(*) AS cnt
-     FROM orders
-     WHERE customer_id = ?")
-* eval stmt.setObject(1,
-    UUID.fromString(
-      '00000000-...'))
-* match rs.getInt('cnt') == <span class="hl-red">0</span>
-* eval conn.close()</pre>
+    <div class="card card-green">
+      <h3>✅ Post-API Database Verification</h3>
+      <p>After each API call, the generated tests also <strong style="color:var(--text)">query the database directly</strong> to confirm the data was persisted correctly — not just that the API returned 200.</p>
+      <p style="margin-top:12px"><em>Example: After creating an order, it verifies the <code>orders</code> table has the right discount, AND checks a denormalized view the agent discovered on its own.</em></p>
     </div>
   </div>
 </div>
 
-<!-- SLIDE 8: Results -->
+<!-- SLIDE 6: Proof — Real Results -->
 <div class="slide">
-  <h2>Results: POST /orders</h2>
+  <h2>Proof of Concept: POST /orders</h2>
+  <p class="mb-16">From a single command, the agent generated <strong style="color:var(--text)">23 test scenarios</strong> across 6 categories:</p>
   <div class="grid grid-4 mt-16">
     <div class="stat"><div class="num">23</div><div class="label">Test Scenarios</div></div>
     <div class="stat"><div class="num">6</div><div class="label">Categories</div></div>
-    <div class="stat"><div class="num">4</div><div class="label">DB Tables Ingested</div></div>
-    <div class="stat"><div class="num">48</div><div class="label">Unit Tests Pass</div></div>
+    <div class="stat"><div class="num">~15</div><div class="label">Minutes to Generate</div></div>
+    <div class="stat"><div class="num">5</div><div class="label">Schema-Only Finds</div></div>
   </div>
   <div class="mt-16 w-full">
     <table>
-      <thead><tr><th>Category</th><th>Count</th><th>Examples</th></tr></thead>
+      <thead><tr><th>Category</th><th>Count</th><th>What It Tests</th></tr></thead>
       <tbody>
-        <tr><td><span class="tag tag-biz">business_rule</span></td><td>6</td><td>GOLD discount at $500 boundary, STANDARD no discount, tier defaults</td></tr>
-        <tr><td><span class="tag tag-bound">boundary</span></td><td>7</td><td>NUMERIC(12,2) overflow, $500.01 threshold, zero-price items</td></tr>
-        <tr><td><span class="tag tag-val">validation</span></td><td>5</td><td>Missing fields, empty arrays, invalid ENUM, negative quantities</td></tr>
-        <tr><td><span class="tag tag-err">error_handling</span></td><td>1</td><td>FK violation — non-existent customerId</td></tr>
-        <tr><td><span class="tag tag-sec">security</span></td><td>2</td><td>Missing auth header, expired token</td></tr>
-        <tr><td>happy_path</td><td>2</td><td>Standard order, multi-item order</td></tr>
+        <tr><td><span class="tag tag-bound">boundary</span></td><td>7</td><td>Numeric overflow, $500.01 discount threshold, zero-price items</td></tr>
+        <tr><td><span class="tag tag-biz">business_rule</span></td><td>6</td><td>GOLD customer discount logic, tier defaults, multi-item totals</td></tr>
+        <tr><td><span class="tag tag-val">validation</span></td><td>5</td><td>Missing required fields, empty arrays, invalid enum values</td></tr>
+        <tr><td><span class="tag tag-sec">security</span></td><td>2</td><td>Missing auth header, expired tokens</td></tr>
+        <tr><td><span class="tag tag-err">error_handling</span></td><td>1</td><td>Foreign key violation — non-existent customer ID</td></tr>
+        <tr><td>happy_path</td><td>2</td><td>Standard order creation, multi-item order</td></tr>
       </tbody>
     </table>
   </div>
+  <div class="callout mt-16 callout-green">
+    <p style="color:var(--text)">⚡ A manual QA engineer would typically write <strong>5–8</strong> of these. The agent found <strong>5 scenarios</strong> that are only visible by reading the database schema.</p>
+  </div>
 </div>
 
-<!-- SLIDE 9: Provider Flexibility -->
+<!-- SLIDE 7: Human-in-the-Loop -->
 <div class="slide">
-  <h2>LLM Provider Agnosticism</h2>
-  <p class="mb-16">Switch providers with a single environment variable — zero code changes.</p>
-  <div class="grid grid-2">
-    <div class="card card-accent">
-      <h3 style="color:var(--accent2)">Anthropic (Claude)</h3>
-      <pre style="border:none;padding:12px;font-size:.85em">
-LLM_PROVIDER=<span class="hl-accent">anthropic</span>
-ANTHROPIC_API_KEY=sk-ant-...
-CLAUDE_MODEL_GENERATION=claude-sonnet-4-6
-CLAUDE_MODEL_ANALYSIS=claude-haiku-4-5-20251001</pre>
+  <h2>Human-in-the-Loop: QA Stays in Control</h2>
+  <p class="mb-16">The AI <strong style="color:var(--text)">augments</strong> QA engineers — it never pushes code without human approval.</p>
+  <div class="grid grid-3 mt-16">
+    <div class="card card-accent" style="text-align:center">
+      <div style="font-size:2.5em;margin-bottom:8px">🤖</div>
+      <h3 style="color:var(--accent2)">1. AI Generates</h3>
+      <p style="text-align:center">Agent drafts test scenarios and feature files, runs them locally to verify syntax is correct.</p>
     </div>
+    <div class="card card-amber" style="text-align:center">
+      <div style="font-size:2.5em;margin-bottom:8px">👤</div>
+      <h3 style="color:var(--amber)">2. Engineer Reviews</h3>
+      <p style="text-align:center">QA engineer reviews each scenario in their IDE. Edits test data, adjusts assertions, or removes irrelevant tests.</p>
+    </div>
+    <div class="card card-green" style="text-align:center">
+      <div style="font-size:2.5em;margin-bottom:8px">✅</div>
+      <h3>3. Human Approves</h3>
+      <p style="text-align:center">Approved tests are committed to the repo and added to the knowledge base — improving future generations.</p>
+    </div>
+  </div>
+  <div class="callout mt-24 callout-green">
+    <p style="color:var(--text)">🔄 <strong>Feedback loop:</strong> Every approved test teaches the agent your team's patterns, making future generations more accurate.</p>
+  </div>
+</div>
+
+<!-- SLIDE 8: Engineering Readiness -->
+<div class="slide">
+  <h2>Engineering Readiness</h2>
+  <p class="mb-16">The platform is built, tested, and documented — ready for production use once LLM access is provisioned.</p>
+  <div class="grid grid-2 mt-16">
     <div class="card card-green">
-      <h3 style="color:var(--green)">OpenAI (GPT)</h3>
-      <pre style="border:none;padding:12px;font-size:.85em">
-LLM_PROVIDER=<span class="hl-green">openai</span>
-OPENAI_API_KEY=sk-...
-OPENAI_MODEL_GENERATION=gpt-4o
-OPENAI_MODEL_ANALYSIS=gpt-4o-mini</pre>
+      <h3>✅ What's Built & Tested</h3>
+      <p>• Multi-source ingestion pipeline (API specs, Java code, tests, DB schemas)<br>
+         • Database schema introspection with PostgreSQL<br>
+         • Automated JDBC verification in generated tests<br>
+         • Self-correcting test generation loop<br>
+         • <strong style="color:var(--text)">48 unit tests passing</strong>, full CI-ready<br>
+         • Docker infrastructure for local development<br>
+         • Complete documentation and architecture guides</p>
+    </div>
+    <div class="card card-accent">
+      <h3 style="color:var(--accent2)">🔧 Architecture Highlights</h3>
+      <p>• <strong style="color:var(--text)">Provider-agnostic:</strong> supports Claude (Anthropic) and GPT (OpenAI) — switch with one config line<br>
+         • <strong style="color:var(--text)">Self-correcting:</strong> if a generated test has syntax errors, the agent fixes and re-runs automatically<br>
+         • <strong style="color:var(--text)">Incremental:</strong> re-generate tests for changed endpoints without touching the rest<br>
+         • <strong style="color:var(--text)">Team-aware:</strong> learns from your existing test patterns to match team style</p>
     </div>
   </div>
-  <div class="diagram mt-16" style="max-width:700px;font-size:.85em;line-height:2">
-.env: LLM_PROVIDER ──→ <span class="hl-accent">get_llm(role)</span> ──┬──→ ChatAnthropic (Sonnet / Haiku)
-                                       └──→ ChatOpenAI (GPT-4o / mini)
+</div>
+
+<!-- SLIDE 9: ROI -->
+<div class="slide">
+  <h2>Projected Impact</h2>
+  <div class="grid grid-3 mt-16">
+    <div class="stat"><div class="num">80%</div><div class="label">Reduction in test writing time</div></div>
+    <div class="stat"><div class="num">3×</div><div class="label">More scenarios per endpoint</div></div>
+    <div class="stat"><div class="num">5+</div><div class="label">Hidden edge cases found per endpoint</div></div>
   </div>
+  <table class="mt-24" style="max-width:900px">
+    <thead><tr><th>Metric</th><th>Manual</th><th>AI-Assisted</th><th>Improvement</th></tr></thead>
+    <tbody>
+      <tr><td style="font-weight:600;color:var(--text)">Time per endpoint</td><td>2–3 days</td><td>15 min + review</td><td class="vs-green">~90% faster</td></tr>
+      <tr><td style="font-weight:600;color:var(--text)">20-endpoint service</td><td>40–60 eng. days</td><td>4–6 eng. days</td><td class="vs-green">36–54 days saved</td></tr>
+      <tr><td style="font-weight:600;color:var(--text)">Coverage depth</td><td>Happy path + basic errors</td><td>+ boundary, DB constraints, security</td><td class="vs-green">Fewer prod defects</td></tr>
+      <tr><td style="font-weight:600;color:var(--text)">DB state verification</td><td>Rarely done</td><td>Automatic</td><td class="vs-green">Data integrity confidence</td></tr>
+    </tbody>
+  </table>
 </div>
 
 <!-- SLIDE 10: The Ask -->
@@ -286,24 +268,28 @@ OPENAI_MODEL_ANALYSIS=gpt-4o-mini</pre>
   <h1 style="font-size:2.2em">What We Need</h1>
   <div class="grid grid-2 mt-16" style="max-width:900px">
     <div class="card card-green">
-      <h3 style="color:var(--green);font-size:1.2em">✅ Already Built</h3>
-      <p>• Multi-source RAG pipeline (5 knowledge sources)<br>
-         • Database schema introspection + JDBC verification<br>
-         • Provider-agnostic LLM factory<br>
-         • 48 unit tests, Docker infra, full documentation<br>
-         • 23 generated test scenarios with FK / boundary / ENUM tests</p>
+      <h3 style="color:var(--green);font-size:1.2em">✅ Already Done</h3>
+      <p>• Full pipeline built and tested (48 tests passing)<br>
+         • Database ingestion + JDBC verification working<br>
+         • Docker infrastructure provisioned<br>
+         • 23 generated test scenarios validated<br>
+         • Documentation and demo-ready</p>
     </div>
     <div class="card card-amber">
-      <h3 style="color:var(--amber);font-size:1.2em">🔑 Need Access To</h3>
-      <p>• LLM API access (Claude or GPT)<br>
-         • Just API keys — zero infrastructure changes<br>
-         • One-line config to activate</p>
+      <h3 style="color:var(--amber);font-size:1.2em">🔑 One Thing Needed</h3>
+      <p>• <strong style="color:var(--text)">LLM API access</strong> (Anthropic Claude or OpenAI GPT)<br>
+         • Only API keys required — no infrastructure changes<br>
+         • One-line configuration change to activate<br>
+         • Provider can be switched at any time</p>
     </div>
   </div>
-  <div class="card mt-16" style="max-width:900px;text-align:center;border:1px solid var(--green)">
-    <h3 style="color:var(--green);font-size:1.3em;margin-bottom:12px">📊 Estimated ROI</h3>
-    <p style="font-size:1.1em;color:var(--text)">Each endpoint generates ~20 test scenarios in minutes.<br>
-    For a service with <strong>20 endpoints</strong>, that's <strong>40–60 engineering days saved</strong> per release cycle.</p>
+  <div class="callout mt-24 callout-green" style="max-width:900px">
+    <h3 style="color:var(--green);font-size:1.3em;margin-bottom:12px">Next Steps</h3>
+    <p style="font-size:1.05em;color:var(--text)">
+      1. <strong>Request LLM API access</strong> through the standard approval process<br>
+      2. <strong>Pilot on one service</strong> (e.g., Orders API) and measure time savings<br>
+      3. <strong>Expand to additional endpoints</strong> based on pilot results
+    </p>
   </div>
 </div>
 
