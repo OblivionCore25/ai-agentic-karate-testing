@@ -139,3 +139,93 @@ def chunk_for_schema(table_info: Dict[str, Any]) -> str:
 
     return "\n".join(lines)
 
+
+def chunk_for_utility(utility_info: Dict[str, Any]) -> str:
+    """Formats a Karate utility feature into a readable text block for embedding.
+
+    The output is structured so the LLM understands how to *call* the utility
+    rather than copy its implementation inline.
+    """
+    lines = []
+    lines.append(f"Utility: {utility_info['name']}")
+    lines.append(f"Classpath: {utility_info['classpath']}")
+
+    if utility_info.get('purpose'):
+        lines.append(f"Purpose: {utility_info['purpose']}")
+
+    scope = utility_info.get('scope', 'global')
+    lines.append(f"Scope: {scope}")
+    lines.append("")
+
+    # Build the call pattern example
+    call_keyword = "callonce" if utility_info.get('is_setup', False) else "call"
+    params = utility_info.get('parameters', [])
+    if params:
+        param_obj = ", ".join(f"{p['name']}: <value>" for p in params)
+        lines.append(f"Call Pattern:")
+        lines.append(f"  * def result = {call_keyword} read('{utility_info['classpath']}') {{ {param_obj} }}")
+    else:
+        lines.append(f"Call Pattern:")
+        lines.append(f"  * def result = {call_keyword} read('{utility_info['classpath']}')")
+
+    lines.append("")
+
+    # Parameters
+    if params:
+        lines.append("Parameters:")
+        for p in params:
+            param_type = f" ({p['detection']})" if p.get('detection') else ""
+            lines.append(f"  - {p['name']}{param_type}")
+        lines.append("")
+
+    # Return values
+    returns = utility_info.get('return_values', [])
+    if returns:
+        lines.append("Returns:")
+        for r in returns:
+            lines.append(f"  - {r}")
+        lines.append("")
+
+    # Full content for deeper understanding
+    if utility_info.get('content'):
+        lines.append("Full Content:")
+        lines.append(utility_info['content'])
+
+    return "\n".join(lines)
+
+
+def chunk_for_config(config_info: Dict[str, Any]) -> str:
+    """Formats a Karate config file into a readable text block for embedding.
+
+    Extracts available variables and environment-specific blocks so the LLM
+    knows which variables are available to reference in generated tests.
+    """
+    lines = []
+    lines.append(f"Config: {config_info['name']}")
+    lines.append(f"Type: {config_info.get('config_type', 'karate-config')}")
+    lines.append("")
+
+    variables = config_info.get('variables', [])
+    if variables:
+        lines.append("Available Variables:")
+        for var in variables:
+            default = f" = {var['default']}" if var.get('default') else ""
+            lines.append(f"  - {var['name']}{default}")
+        lines.append("")
+
+    env_blocks = config_info.get('environment_blocks', [])
+    if env_blocks:
+        lines.append("Environment-Specific Variables:")
+        for env_block in env_blocks:
+            lines.append(f"  [{env_block['env']}]:")
+            for var in env_block.get('variables', []):
+                default = f" = {var['default']}" if var.get('default') else ""
+                lines.append(f"    - {var['name']}{default}")
+        lines.append("")
+
+    if config_info.get('content'):
+        lines.append("Full Content:")
+        lines.append(config_info['content'])
+
+    return "\n".join(lines)
+

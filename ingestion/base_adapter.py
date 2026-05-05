@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 @dataclass
 class IngestedChunk:
     content: str
-    origin_type: str        # "spec", "code", "test", "reference"
+    origin_type: str        # "spec", "code", "test", "reference", "utility", "config"
     source_file: str
     endpoint_tag: str       # e.g., "POST /orders"
     chunk_type: str         # e.g., "endpoint_definition", "service_method", "feature_scenario"

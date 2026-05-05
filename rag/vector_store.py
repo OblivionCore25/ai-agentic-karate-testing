@@ -21,7 +21,9 @@ class VectorStore:
             "code": "source_code",
             "test": "existing_tests",
             "reference": "karate_reference",
-            "schema": "db_schemas"
+            "schema": "db_schemas",
+            "utility": "project_utilities",
+            "config": "project_configs",
         }
 
     def initialize(self):

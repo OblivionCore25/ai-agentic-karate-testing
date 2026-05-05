@@ -116,6 +116,26 @@ def ingest(
             finally:
                 adapter.close()
 
+        # Project context: utility features and config files
+        status.update("[bold blue]Discovering project utilities and configs...")
+        from ingestion.project_context_adapter import ProjectContextAdapter
+        settings = get_settings()
+        project_adapter = ProjectContextAdapter(
+            extra_utility_dirs=settings.utility_dirs or None
+        )
+        try:
+            utility_chunks, config_chunks = project_adapter.ingest_separated(tests)
+            if utility_chunks:
+                store.add_documents("utility", utility_chunks)
+            if config_chunks:
+                store.add_documents("config", config_chunks)
+            console.print(
+                f"[green]Discovered {len(utility_chunks)} utilities, "
+                f"{len(config_chunks)} configs.[/green]"
+            )
+        except Exception as e:
+            console.print(f"[yellow]⚠️  Project context discovery failed: {e}[/yellow]")
+
     console.print("[bold green]Full ingestion complete![/bold green]")
     stats()
 

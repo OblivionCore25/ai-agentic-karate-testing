@@ -35,7 +35,12 @@ class Settings(BaseSettings):
     retrieval_top_k_test: int = 5
     retrieval_top_k_reference: int = 5
     retrieval_top_k_schema: int = 3
+    retrieval_top_k_utility: int = 10  # higher default — include all utilities
+    retrieval_top_k_config: int = 3
     relevance_threshold: float = 0.3
+    
+    # Project Context
+    utility_dirs: str = ""  # comma-separated extra utility dir names (supplements defaults)
     
     # Project Settings
     karate_project_path: str = "./karate_project"

@@ -20,10 +20,13 @@ def build_user_prompt(
     existing_test_patterns: str,
     dominant_data_pattern: str = "inline_examples",
     endpoint_tag: str = "",
-    schema_context: str = ""
+    schema_context: str = "",
+    utility_context: str = "",
+    config_context: str = "",
 ) -> str:
     data_pattern_directive = _get_data_pattern_directive(dominant_data_pattern)
     jdbc_directive = _get_jdbc_directive(schema_context)
+    utility_directive = _get_utility_directive(utility_context, config_context)
 
     return f"""Convert the following test scenario into a valid Karate .feature file.
 
@@ -46,6 +49,7 @@ def build_user_prompt(
 - Include proper status code assertions with `Then status <code>`
 {data_pattern_directive}
 {jdbc_directive}
+{utility_directive}
 
 ## Output Format
 Return ONLY the .feature file content. Do not wrap it in markdown code fences.
@@ -154,3 +158,32 @@ OR use the simpler inline Java JDBC approach:
 6. For happy_path scenarios: verify the record was created/updated correctly
 7. For error/validation scenarios: verify the record was NOT created (count == 0)
 """
+
+
+def _get_utility_directive(utility_context: str, config_context: str) -> str:
+    """Build the 'Available Team Utilities' directive for the LLM prompt."""
+    if not utility_context and not config_context:
+        return ""
+    if (
+        (not utility_context or utility_context.strip() in ("(no examples available)", ""))
+        and (not config_context or config_context.strip() in ("(no examples available)", ""))
+    ):
+        return ""
+
+    parts = []
+    parts.append("## Available Team Utilities")
+    parts.append("IMPORTANT: Use these existing team utilities instead of writing inline code.")
+    parts.append("Call them using `* call read('classpath:...')` or `* callonce read('classpath:...')`.")
+    parts.append("Do NOT reinvent functionality that already exists in these utilities.")
+    parts.append("")
+
+    if utility_context and utility_context.strip() not in ("(no examples available)", ""):
+        parts.append(utility_context)
+
+    if config_context and config_context.strip() not in ("(no examples available)", ""):
+        parts.append("")
+        parts.append("### Project Configuration Variables")
+        parts.append("These variables are available from karate-config and can be referenced directly:")
+        parts.append(config_context)
+
+    return "\n".join(parts)
